@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: negativation-file-handler-test
+spec:
+  selector:
+    appname: negativation-file-handler-test
+  ports:
+    - protocol: TCP
+      port: 80
+  type: ClusterIP

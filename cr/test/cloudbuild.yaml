@@ -1,0 +1,139 @@
+steps:
+    - name: gcr.io/cloud-builders/gcloud
+      id: "Key Management"
+      entrypoint: 'bash'
+      args: [ '-c', "gcloud secrets versions access latest --secret=negativation_file_handler_credentials > key.json" ]
+
+    - name: "gcr.io/cloud-builders/docker"
+      id: "Network"
+      args:
+        - "network"
+        - "create"
+        - "--subnet"
+        - "172.18.0.0/16"
+        - "--gateway"
+        - "172.18.0.1"
+        - "ssf"
+
+    - name: "gcr.io/cloud-builders/docker"
+      id: "Database"
+      args:
+        - "run"
+        - "-d"
+        - "--network"
+        - "ssf"
+        - "--name"
+        - "test-database"
+        - "--env"
+        - "POSTGRES_DB=postgres"
+        - "--env"
+        - "POSTGRES_USER=postgres"
+        - "--env"
+        - "POSTGRES_PASSWORD=postgres"
+        - "-p"
+        - "5432:5432"
+        - "postgres:9.6.3"
+
+    - name: "gcr.io/cloud-builders/docker"
+      id: "FTP"
+      args:
+        - "run"
+        - "-d"
+        - "--network"
+        - "ssf"
+        - "--ip"
+        - "172.18.0.5"
+        - "--name"
+        - "test-ftp"
+        - "--env"
+        - "PUBLICHOST=172.18.0.5"
+        - "--env"
+        - "FTP_USER_NAME=username"
+        - "--env"
+        - "FTP_USER_PASS=mypass"
+        - "--env"
+        - "FTP_USER_HOME=/home/username"
+        - "-p"
+        - "21:21"
+        - "-p"
+        - "30000-30009:30000-30009"
+        - "--volume"
+        - "/app/ftp/data:/home/username/"
+        - "--volume"
+        - "/app/ftp/passwd:/etc/pure-ftpd/passwd"
+        - "stilliard/pure-ftpd:latest"
+
+    - name: "gcr.io/cloud-builders/docker"
+      id: "SFTP"
+      args:
+        - "run"
+        - "-d"
+        - "--network"
+        - "ssf"
+        - "--ip"
+        - "172.18.0.6"
+        - "-p"
+        - "2222:22"
+        - "atmoz/sftp:latest"
+        - "foo:123:1001::upload"
+
+    - name: "gcr.io/cloud-builders/docker"
+      id: "Build"
+      waitFor: ['Database', 'FTP', 'SFTP']
+      entrypoint: bash
+      args: ['-c', 'docker build -t gcr.io/$PROJECT_ID/$REPO_NAME:$SHORT_SHA -f Dockerfile.test
+        --network ssf
+        --build-arg MIX_ENV=test
+        --build-arg GOOGLE_APPLICATION_CREDENTIALS=$$GOOGLE_APPLICATION_CREDENTIALS
+        --build-arg GOOGLE_PROJECT=$$GOOGLE_PROJECT
+        --build-arg GOOGLE_BUCKET=$$GOOGLE_BUCKET
+        --build-arg DB_HOST=test-database
+        --build-arg DB_PORT=5432
+        --build-arg SFTP_HOST_BOAVISTA=172.18.0.5
+        --build-arg SFTP_PORT_BOAVISTA=21
+        --build-arg SFTP_USER_BOAVISTA=username
+        --build-arg SFTP_PASS_BOAVISTA=mypass
+        --build-arg SFTP_FOLDER_BOAVISTA=/
+        .'
+      ]
+      secretEnv: [
+        'GOOGLE_APPLICATION_CREDENTIALS',
+        'GOOGLE_PROJECT',
+        'GOOGLE_BUCKET',
+        'SFTP_HOST_BOAVISTA',
+        'SFTP_PORT_BOAVISTA',
+        'SFTP_USER_BOAVISTA',
+        'SFTP_PASS_BOAVISTA',
+        'SFTP_FOLDER_BOAVISTA'
+      ]
+
+    - name: "gcr.io/cloud-builders/docker"
+      id: "Test"
+      args:
+        - "run"
+        - "--network"
+        - "ssf"
+        - "--env"
+        - "CODACY_PROJECT_TOKEN=$_CODACY_PROJECT_TOKEN"
+        - "--env"
+        - "COMMIT=$COMMIT_SHA"
+        - "gcr.io/$PROJECT_ID/$REPO_NAME:$SHORT_SHA"
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/prv-cobranca/secrets/kirin_google_application_credentials/versions/latest
+      env: 'GOOGLE_APPLICATION_CREDENTIALS'
+    - versionName: projects/prv-cobranca/secrets/kirin_google_project/versions/latest
+      env: 'GOOGLE_PROJECT'
+    - versionName: projects/prv-cobranca/secrets/negativation_file_handler_google_bucket/versions/latest
+      env: 'GOOGLE_BUCKET'
+    - versionName: projects/prv-cobranca/secrets/negativation_file_handler_host_ftp/versions/latest
+      env: 'SFTP_HOST_BOAVISTA'
+    - versionName: projects/prv-cobranca/secrets/negativation_file_handler_port_ftp/versions/latest
+      env: 'SFTP_PORT_BOAVISTA'
+    - versionName: projects/prv-cobranca/secrets/negativation_file_handler_user_ftp/versions/latest
+      env: 'SFTP_USER_BOAVISTA'
+    - versionName: projects/prv-cobranca/secrets/negativation_file_handler_pass_ftp/versions/latest
+      env: 'SFTP_PASS_BOAVISTA'
+    - versionName: projects/prv-cobranca/secrets/negativation_file_handler_destination_ftp/versions/latest
+      env: 'SFTP_FOLDER_BOAVISTA'

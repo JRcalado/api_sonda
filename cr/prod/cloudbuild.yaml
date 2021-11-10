@@ -1,0 +1,54 @@
+substitutions:
+  _GCP_CLUSTER_LOCATION: us-central1
+  _GCP_CLUSTER: cluster-1
+  _GCP_NAMESPACE: cluster-1
+  _GCP_PROJECT: cluster-1
+  _GCP_SM_SECRET_NAME: sonda-api
+  
+
+steps:
+    - name: "gcr.io/cloud-builders/docker"
+      id: "Build"
+      entrypoint: bash
+      args: ['-c', 'docker build -t gcr.io/$PROJECT_ID/$REPO_NAME:$SHORT_SHA
+        --build-arg MIX_ENV=dev
+        --build-arg GOOGLE_PROJECT=$_GCP_PROJECT
+        .'
+      ]
+
+    - name: "gcr.io/cloud-builders/docker"
+      id: "Push"
+      args:
+          - "push"
+          - "gcr.io/$PROJECT_ID/$REPO_NAME:$SHORT_SHA"
+
+    - name: 'gcr.io/cloud-builders/kubectl'
+      id: "Kubectl"
+      args: ['apply', '-f', 'cr/dev/k8s/']
+      env:
+      - 'CLOUDSDK_COMPUTE_ZONE=${_GCP_CLUSTER_LOCATION}'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=${_GCP_CLUSTER}'
+
+    - name: "gcr.io/cloud-builders/gcloud"
+      id: "Deploy"
+      args:
+          - "run"
+          - "deploy"
+          - "sonda-api"
+          - "--image"
+          - "gcr.io/$PROJECT_ID/$REPO_NAME:$SHORT_SHA"
+          - "--platform"
+          - "gke"
+          - "--namespace"
+          - "${_GCP_NAMESPACE}"
+          - "--cluster"
+          - "${_GCP_CLUSTER}"
+          - "--cluster-location"
+          - "${_GCP_CLUSTER_LOCATION}"
+          - "--port"
+          - "80"
+          - "--min-instances"
+          - "1"
+          - "--labels"
+          - "appname=sonda-api"
+
