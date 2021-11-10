@@ -11,7 +11,7 @@ steps:
       id: "Build"
       entrypoint: bash
       args: ['-c', 'docker build -t gcr.io/$PROJECT_ID/$REPO_NAME:$SHORT_SHA
-        --build-arg MIX_ENV=prod
+        --build-arg MIX_ENV=dev
         --build-arg GOOGLE_PROJECT=$_GCP_PROJECT
         .'
       ]
