@@ -4,7 +4,9 @@ defmodule MyPhxApp.Services.MovingSonda do
   alias MyPhxApp.Structs.Sonda
 
 
+
   def control(out, sonda)do
+
     action = String.upcase(out)
    cond do
      action == "L" or action == "R" -> calculate(action,  sonda.orientation) |> updade_orientatio()
@@ -22,8 +24,6 @@ def moved(position, orientation)do
      "E" -> List.update_at(position, 0, &(&1 + 1))
      "S" -> List.update_at(position, 1, &(&1 - 1))
      "W" -> List.update_at(position, 0, &(&1 - 1))
-
-
    end
 
 end

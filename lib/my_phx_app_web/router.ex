@@ -2,7 +2,7 @@ defmodule MyPhxAppWeb.Router do
   use MyPhxAppWeb, :router
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug :accepts, ["json","text","html"]
   end
 
   scope "/api", MyPhxAppWeb do

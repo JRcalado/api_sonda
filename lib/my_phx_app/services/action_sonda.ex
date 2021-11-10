@@ -3,6 +3,24 @@ defmodule MyPhxApp.Services.ActionSonda do
   alias MyPhxApp.Agents.SondaAgent
   alias MyPhxApp.Structs.Sonda
   alias MyPhxApp.Services.MovingSonda
+  alias MyPhxApp.Validations.ValidateMovement
+
+
+  def call(params) do
+
+    starting_position({:ok,  "ok"})
+    SondaAgent.get()|> IO.inspect()
+
+
+    params
+    |> ValidateMovement.changeset()
+    |> starting_position()
+    |> execute()
+
+
+    SondaAgent.get()|> IO.inspect()
+
+  end
 
   def action(sonda, grid, command) do
       SondaAgent.start_link(sonda)
@@ -12,42 +30,50 @@ defmodule MyPhxApp.Services.ActionSonda do
 
   def execute(nil), do: SondaAgent.get()
 
-  def execute(command) do
+  def execute({:ok, command}) do
 
-    String.next_codepoint(command)
-    |> Tuple.to_list
-    |> List.first
-    |> MyPhxApp.Services.MovingSonda.control(SondaAgent.get())
+    IO.inspect(command)
 
-    String.next_codepoint(command)
-    |> Tuple.to_list
-    |> List.last
-    |> check_tring
-    |> execute()
+
+   cond do
+    Enum.count(command) == 0  -> {:ok, "Comandos executados"}
+    Enum.count(command) >= 0 ->
+      [head | tail] = command
+      head
+      |> MovingSonda.control(SondaAgent.get())
+      execute({:ok, tail})
+   end
+
+
+
   end
+  def execute({:error, error}), do: {:error, error}
+  # def check_tring(str) do
 
-  def check_tring(str) do
+  #   case String.length(str)  do
+  #     0 -> nil
+  #     _ -> str
+  #   end
+  # end
 
-    case String.length(str)  do
-      0 -> nil
-      _ -> str
-    end
-  end
-
-  def starting_position() do
+  def starting_position({:ok, struct}) do
     Sonda.new()
     |> SondaAgent.start_link()
-    |> checkAgent
+    |> checkAgent(struct)
   end
 
-  def checkAgent({:ok, reason}) do
-    SondaAgent.get()|>IO.inspect
-  end
+  def starting_position({:error, error}), do: {:error, error}
 
-  def checkAgent({:error, {:already_started, reason}}) do
+  def checkAgent({:ok, _}, struct), do: {:ok, struct}
+
+  def checkAgent({:error, {:already_started, _}}, struct) do
     Sonda.new([0, 0], "E")
     |> SondaAgent.set()
+    {:ok, struct}
+
   end
+
+  def checkAgent({:error, error}, _), do: {:error, error}
 
 
 end

@@ -2,7 +2,6 @@ defmodule MyPhxAppWeb.SondasController do
 use MyPhxAppWeb, :controller
 
 alias MyPhxApp.Services.ActionSonda
-
   def startingPosition(conn, request) do
    ActionSonda.starting_position
     conn
@@ -11,8 +10,13 @@ alias MyPhxApp.Services.ActionSonda
   end
 
   def moving(conn, request) do
-    ActionSonda.execute("M") |> IO.inspect()
-     conn
+
+    request
+    |> MyPhxApp.moving()
+
+    # ActionSonda.execute("M") |> IO.inspect()
+
+    conn
      |> put_status(200)
      |> json("Sucesso")
    end

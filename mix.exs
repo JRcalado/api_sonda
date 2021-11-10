@@ -34,10 +34,12 @@ defmodule MyPhxApp.MixProject do
   defp deps do
     [
       {:phoenix, "~> 1.5.7"},
+      {:phoenix_ecto, "~> 4.1"},
       {:telemetry_metrics, "~> 0.4"},
       {:telemetry_poller, "~> 0.4"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 2.0"},
+      {:ecto_json, "~> 0.1.0"}
     ]
   end
 
