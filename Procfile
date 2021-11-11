@@ -1,1 +1,1 @@
-web: mix phx.gen.secret && mix deps.get && mix phx.server
+web: mix phx.digest && mix deps.get && mix phx.server
