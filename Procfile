@@ -1,1 +1,1 @@
-web: mix run --no-halt
+web: mix deps.get && mix phx.server
