@@ -1,8 +1,8 @@
 substitutions:
   _GCP_CLUSTER_LOCATION: us-central1-c
-  _GCP_CLUSTER: cluster-1
-  _GCP_NAMESPACE: cluster-1
-  _GCP_PROJECT: cluster-1
+  _GCP_CLUSTER: cluster-calado
+  _GCP_NAMESPACE: cluster-calado
+  _GCP_PROJECT: cluster-calado
   _GCP_SM_SECRET_NAME: sonda-api
   
 

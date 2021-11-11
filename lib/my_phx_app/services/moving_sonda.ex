@@ -9,7 +9,7 @@ defmodule MyPhxApp.Services.MovingSonda do
 
     action = String.upcase(out)
    cond do
-     action == "L" or action == "R" -> calculate(action,  sonda.orientation) |> updade_orientatio()
+     action == "GE" or action == "GD" -> calculate(action,  sonda.orientation) |> updade_orientatio()
      action == "M" -> moved( sonda.position,  sonda.orientation)|> updade_position()
      true -> {:error, "coordenadas erradas"}
 
@@ -31,10 +31,10 @@ end
 def calculate(turn, orientation )do
 #IO.inspect( "passei aqui")
               map =  %{
-                  :N => %{L: "W", R: "E"},
-                  :E =>%{L: "N", R: "S"},
-                  :S => %{L: "E", R: "W"},
-                  :W => %{L: "S", R: "N"}
+                  :N => %{GE: "W", GD: "E"},
+                  :E =>%{GE: "N", GD: "S"},
+                  :S => %{GE: "E", GD: "W"},
+                  :W => %{GE: "S", GD: "N"}
                }
    Map.get(map, String.upcase(orientation) |> String.to_atom())
    |> Map.get( String.to_atom(turn))
