@@ -27,7 +27,7 @@
         mix deps.get && \
         mix release
 
-
+ RUN mix phx.swagger.generate
 
     RUN echo "America/Fortaleza" > /etc/timezone
  ENTRYPOINT ["/bin/sh", "-c" , "mix deps.get && mix phx.server"] 
