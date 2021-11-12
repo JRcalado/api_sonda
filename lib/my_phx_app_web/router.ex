@@ -9,6 +9,7 @@ defmodule MyPhxAppWeb.Router do
     pipe_through :api
     put  "/starting-position", SondasController, :startingPosition
     post  "/moving", SondasController, :moving
+    get  "/position", SondasController, :position
 
   end
 end

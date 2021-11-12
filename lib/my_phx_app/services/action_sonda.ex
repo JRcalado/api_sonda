@@ -3,60 +3,44 @@ defmodule MyPhxApp.Services.ActionSonda do
   alias MyPhxApp.Agents.SondaAgent
   alias MyPhxApp.Structs.Sonda
   alias MyPhxApp.Services.MovingSonda
+  alias MyPhxApp.Services.History
   alias MyPhxApp.Validations.ValidateMovement
 
+  @bussola  %{
+    :N => "C",
+    :E => "D",
+    :S => "B",
+    :W => "E"
+  }
 
   def call(params) do
-
-    starting_position({:ok,  "ok"})
-    SondaAgent.get()|> IO.inspect()
-
 
     params
     |> ValidateMovement.changeset()
     |> starting_position()
     |> execute()
-
-
-    SondaAgent.get()|> IO.inspect()
-
+    |> response()
   end
-
-  def action(sonda, grid, command) do
-      SondaAgent.start_link(sonda)
-     # execute(command)
-      SondaAgent.get()
-  end
-
   def execute(nil), do: SondaAgent.get()
-
   def execute({:ok, command}) do
-
-    IO.inspect(command)
-
-
    cond do
     Enum.count(command) == 0  -> {:ok, "Comandos executados"}
     Enum.count(command) >= 0 ->
       [head | tail] = command
       head
       |> MovingSonda.control(SondaAgent.get())
-      execute({:ok, tail})
+      |> checkMoving(tail)
+      |> execute()
    end
-
-
-
   end
   def execute({:error, error}), do: {:error, error}
-  # def check_tring(str) do
 
-  #   case String.length(str)  do
-  #     0 -> nil
-  #     _ -> str
-  #   end
-  # end
+  def checkMoving({:error, error}, _), do:  {:error, error}
+  def checkMoving(_, tail), do:  {:ok ,tail}
 
   def starting_position({:ok, struct}) do
+    History.starting_history()
+
     Sonda.new()
     |> SondaAgent.start_link()
     |> checkAgent(struct)
@@ -65,7 +49,6 @@ defmodule MyPhxApp.Services.ActionSonda do
   def starting_position({:error, error}), do: {:error, error}
 
   def checkAgent({:ok, _}, struct), do: {:ok, struct}
-
   def checkAgent({:error, {:already_started, _}}, struct) do
     Sonda.new([0, 0], "E")
     |> SondaAgent.set()
@@ -74,6 +57,39 @@ defmodule MyPhxApp.Services.ActionSonda do
   end
 
   def checkAgent({:error, error}, _), do: {:error, error}
+
+  def starting_history()do
+    History.new()
+    |> HistoryAgent.start_link()
+  end
+
+  def response({:ok, _}) do
+    sonda = SondaAgent.get()
+      {:ok ,%{
+          x: List.first(sonda.position),
+          y: List.last(sonda.position)
+        }
+      }
+  end
+  def response({:error, error}), do: {:error, error}
+
+  def getPosition() do
+    Sonda.new() |> SondaAgent.start_link()
+
+    sonda = SondaAgent.get()
+
+    orientation = @bussola
+    |> Map.get(String.to_atom(sonda.orientation))
+
+    {:ok ,%{
+        x: List.first(sonda.position),
+        y: List.last(sonda.position),
+        face: orientation
+      }
+    }
+
+
+  end
 
 
 end

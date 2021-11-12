@@ -1,33 +1,20 @@
 defmodule MyPhxApp.Structs.Planalto do
 
-  defstruct size: nil, grid: nil
+  defstruct size: [5,5], grid: nil
 
-  def new(size) do
-    %__MODULE__{
-      size: sum(size), grid: init(size) |> Enum.reverse
+  def chickLimits(position) do
 
-    }
-  end
-
-  def init(size) do
-    teste =  for x <- 0..List.first(size) do
-      x
+    [head | tail] = position
+     size = Map.get(%__MODULE__{}, :size)
+     cond do
+       head === List.first(size) ->  false
+       List.first(tail) === List.last(size) -> false
+       head < 0 -> false
+       List.first(tail) < 0 -> false
+       tail != List.last(size)  -> true
      end
 
-     for x <- 1..List.last(size) do
-      out = testeL(List.first(teste) + (x - 1), List.last(teste) + (x - 1)) |> List.to_tuple
-     end
 
-  end
-
-  def testeL(first, last) do
-    teste = for x <- first..last, do: x
-  end
-
-  def sum([]), do: 0
-
-  def sum([head | tail]) do
-    head + sum(tail)
   end
 
 end

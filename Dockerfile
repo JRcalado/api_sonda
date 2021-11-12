@@ -31,4 +31,4 @@
 
     RUN echo "America/Fortaleza" > /etc/timezone
  ENTRYPOINT ["/bin/sh", "-c" , "mix deps.get && mix phx.server"] 
-    # ENTRYPOINT ["/bin/sh", "-c" , "_build/$MIX_ENV/rel/alert_error_log/bin/alert_error_log start" ] 
+   
