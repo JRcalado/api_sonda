@@ -3,7 +3,6 @@ defmodule MyPhxApp.Services.ActionSonda do
   alias MyPhxApp.Agents.SondaAgent
   alias MyPhxApp.Structs.Sonda
   alias MyPhxApp.Services.MovingSonda
-  alias MyPhxApp.Services.History
   alias MyPhxApp.Validations.ValidateMovement
 
   @bussola  %{
@@ -39,8 +38,6 @@ defmodule MyPhxApp.Services.ActionSonda do
   def checkMoving(_, tail), do:  {:ok ,tail}
 
   def starting_position({:ok, struct}) do
-    History.starting_history()
-
     Sonda.new()
     |> SondaAgent.start_link()
     |> checkAgent(struct)
@@ -58,10 +55,6 @@ defmodule MyPhxApp.Services.ActionSonda do
 
   def checkAgent({:error, error}, _), do: {:error, error}
 
-  def starting_history()do
-    History.new()
-    |> HistoryAgent.start_link()
-  end
 
   def response({:ok, _}) do
     sonda = SondaAgent.get()

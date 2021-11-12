@@ -49,6 +49,8 @@ end
   end
 
   def update_eixo_x(history, eixo) do
+
+
     eixo_atom = String.to_atom(eixo)
     eixo_map = Map.get(%__MODULE__{},eixo_atom)
     eixo_new = eixo_map + 1

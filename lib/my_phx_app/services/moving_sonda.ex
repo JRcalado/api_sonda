@@ -3,7 +3,7 @@ defmodule MyPhxApp.Services.MovingSonda do
   alias MyPhxApp.Agents.SondaAgent
   alias MyPhxApp.Structs.Sonda
   alias MyPhxApp.Structs.Planalto
-  alias MyPhxApp.Services.History
+
 
   @map  %{
     :N => %{GE: "W", GD: "E"},
@@ -48,7 +48,7 @@ def calculate(turn, orientation )do
 end
 
  def updade_orientatio(orientation) do
-  History.update_orientation(orientation)
+
   SondaAgent.get()
   |> Sonda.update_orientation(orientation)
   |> SondaAgent.set()
@@ -57,7 +57,6 @@ end
 end
 
 def updade_position({:ok, position}) do
-  History.update_position(position)
   SondaAgent.get()
   |> Sonda.update_position(position)
   |> SondaAgent.set()
