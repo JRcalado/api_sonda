@@ -30,7 +30,7 @@ http://localhost:4000/api/swagger
 ## Teste
 Para executar os testes bastar rodar o seguinte comando
 ```bash
-docker-composer up --build
+docker-compose -f docker-compose.test.yml up --build
 ```
 ## Deploy e acesso
 subimos a aplicação no heroku e caso queira acessar basta acessar a seguinte URL:

@@ -2,7 +2,7 @@
              [{applications,[kernel,stdlib,elixir,logger,runtime_tools,
                              phoenix,phoenix_ecto,telemetry_metrics,
                              telemetry_poller,jason,plug_cowboy,ecto_json,
-                             poison]},
+                             poison,phoenix_swagger,ex_json_schema]},
               {description,"my_phx_app"},
               {modules,['Elixir.MyPhxApp',
                         'Elixir.MyPhxApp.Agents.HistoryAgent',

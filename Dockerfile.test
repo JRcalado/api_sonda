@@ -1,0 +1,21 @@
+    FROM elixir:1.12
+
+    ENV MIX_ENV=dev
+
+    RUN apt-get update && \
+        apt-get install -y inotify-tools && \
+        apt-get install -y nodejs && \
+        curl -L https://npmjs.org/install.sh | sh && \
+        mix local.hex --force && \
+        mix archive.install hex phx_new 1.5.9 --force && \
+        mix local.rebar --force
+    ENV APP_HOME /app
+    RUN mkdir $APP_HOME
+    WORKDIR $APP_HOME
+
+    COPY . .
+   
+
+    RUN mix phx.swagger.generate
+
+    ENTRYPOINT ["/bin/sh", "-c" , "mix deps.get && mix test --trace"] 
