@@ -5,9 +5,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.local
-    container_name: alert-error-log
+    container_name: sonda-api
     volumes: 
       - ./:/app
     ports:
       - "4000:4000"
+
    

@@ -16,6 +16,6 @@
     COPY . .
    
 
-   # RUN mix phx.swagger.generate
+    RUN mix phx.swagger.generate
 
     ENTRYPOINT ["/bin/sh", "-c" , "mix deps.get && mix phx.server"] 

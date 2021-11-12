@@ -1,0 +1,144 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "definitions": {
+    "Batch": {
+      "description": "Responde as coordenadas atuais x e y ",
+      "title": "position",
+      "type": "object"
+    },
+    "Data": {
+      "description": "Endpoint que envia a sonda para a posição inicial (0,0)",
+      "title": "starting-position",
+      "type": "object"
+    },
+    "Moved": {
+      "description": "Endpoint receber o movimento da sonda",
+      "example": {
+        "movimentos": [
+          "GE",
+          "M",
+          "M"
+        ]
+      },
+      "properties": {
+        "method": {
+          "description": "Metodo de envio. E-mail = 1 , Sms = 2  ",
+          "type": "string"
+        }
+      },
+      "required": [
+        "method"
+      ],
+      "title": "moving",
+      "type": "object"
+    }
+  },
+  "host": "localhost:4000",
+  "info": {
+    "contact": {
+      "name": "Sonda API",
+      "site": "https://calado.dev"
+    },
+    "description": "API Documentation for Sonda API v1",
+    "termsOfService": "For private",
+    "title": "Sonda Api",
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/moving": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Endpoint receber o movimento da sonda ",
+        "operationId": "MyPhxAppWeb.SondasController.moving",
+        "parameters": [
+          {
+            "description": "corpo da requisição",
+            "in": "body",
+            "name": "request_body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/Moved"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "summary": "",
+        "tags": [
+          "Mover sonda"
+        ]
+      }
+    },
+    "/api/position": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Responde as coordenadas atuais x e y  ",
+        "operationId": "MyPhxAppWeb.SondasController.position",
+        "parameters": [],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "summary": "",
+        "tags": [
+          "Retornar posição"
+        ]
+      }
+    },
+    "/api/starting-position": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Endpoint que envia a sonda para a posição inicial (0,0) ",
+        "operationId": "MyPhxAppWeb.SondasController.startingPosition",
+        "parameters": [],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "summary": "",
+        "tags": [
+          "Definir posição"
+        ]
+      }
+    }
+  },
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "swagger": "2.0"
+}
