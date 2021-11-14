@@ -7,7 +7,7 @@
 - Elixir
 - Phoenix
 
-Api foi construida com a linguagem de programação funcional Elixir e foi ultilizado o framawork Phoenix
+Api foi construida com a linguagem de programação funcional Elixir e foi ultilizado o framework Phoenix
 
 ## Instalação
 Para rodar localmente esta aplicação, os seguintes software precisam serem instalados
